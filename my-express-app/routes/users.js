@@ -55,7 +55,7 @@ router.post('/login',function(req,res){
   			res.status(200);
   			res.send(_.omit(user.dataValues,'password'));
   		}else{
-  			res.status(400);
+  			res.status(401);
   			res.send({success:false,message:'user not found'});
   		}
 	});
