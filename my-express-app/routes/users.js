@@ -51,7 +51,7 @@ router.post('/login',function(req,res){
 			password:cipher.final('hex')
 		}
 	}).then(user => {
-  		if(user.get('name')!=undefined){
+  		if(user != null){
   			res.status(200);
   			res.send(_.omit(user.dataValues,'password'));
   		}else{
