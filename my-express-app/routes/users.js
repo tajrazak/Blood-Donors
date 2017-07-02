@@ -3,8 +3,7 @@ var router = express.Router();
 var Sequelize = require('sequelize');
 const crypto = require('crypto');
 var _ = require('underscore');
-
-const cipher = crypto.createCipher('aes192','34dc8f8612724b6e43c9414cc3309fd1809c84b1b9f73d0754d9788793ddb91d');
+var config = require('../config.json');
 
 sequelize = new Sequelize('BloodDonors', 'root', 'vahidataj', {
   host: 'localhost',
@@ -31,6 +30,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/create',function(req,res){
+  cipher = crypto.createCipher('aes192',config.cryptoSecret);
 	cipher.update(req.body.password,'utf8','hex');
 	User.create({
 	    name: req.body.name,
@@ -44,10 +44,12 @@ router.post('/create',function(req,res){
 
 
 router.post('/login',function(req,res){
+  cipher = crypto.createCipher('aes192',config.cryptoSecret);
 	cipher.update(req.body.password,'utf8','hex');
+  console.log(req.body)
 	User.findOne({
 		where:{
-			name:req.body.name,
+			email:req.body.email,
 			password:cipher.final('hex')
 		}
 	}).then(user => {
@@ -56,7 +58,7 @@ router.post('/login',function(req,res){
   			res.send(_.omit(user.dataValues,'password'));
   		}else{
   			res.status(401);
-  			res.send({success:false,message:'user not found'});
+  			res.send({success:false,message:'Invalid email or password'});
   		}
 	});
 })
