@@ -20,8 +20,6 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 
-
-
 sequelize = new Sequelize('BloodDonors', config["mysql_username"], config["mysql_password"], {
   host: 'localhost',
   dialect: 'mysql',
