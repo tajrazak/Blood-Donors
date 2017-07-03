@@ -5,9 +5,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Sequelize = require('sequelize');
+var config = require('./config.json');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+
 
 var app = express();
 
@@ -20,7 +20,9 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 
-sequelize = new Sequelize('BloodDonors', 'root', 'vahidataj', {
+
+
+sequelize = new Sequelize('BloodDonors', config["mysql_username"], config["mysql_password"], {
   host: 'localhost',
   dialect: 'mysql',
 
@@ -31,14 +33,15 @@ sequelize = new Sequelize('BloodDonors', 'root', 'vahidataj', {
   }
 });
 
-
-
 sequelize
 .authenticate()
 .then(()=> {console.log('connection established success')})
 .catch(err => {
     console.error('Unable to connect to the database:', err);
 });
+
+var index = require('./routes/index');
+var users = require('./routes/users')(sequelize,config);
 
 
 // view engine setup
